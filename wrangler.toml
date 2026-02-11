@@ -1,22 +1,23 @@
 name = "nsfwlover-proxy"
 main = "src/worker.js"
 compatibility_date = "2026-02-11"
+compatibility_flags = ["nodejs_compat_v2"]
 
+# 靜態資產 (public/ 資料夾)
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+# 環境變數
 [vars]
 TARGET_API = "https://www.nsfwlover.com/api/image"
 
-[site]
-bucket = "./public"
-
-[[site.include]]
-glob = "./public/*"
-
-# KV 速率限制 (先執行 wrangler kv:namespace create "RATE-LIMIT")
+# KV 速率限制
 [[kv_namespaces]]
 binding = "KV"
-id = "YOUR_KV_ID"  # 部署後替換
+id = "YOUR_KV_NAMESPACE_ID"  # 先執行 `wrangler kv:namespace create "RATE-LIMIT"` 獲取
 
-# 生產環境範例
+# 生產路由範例 (自訂域)
 [[env.production]]
 name = "production"
 route = { pattern = "api.nsfwlover.yourdomain.com/*", zone_name = "yourdomain.com" }
