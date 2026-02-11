@@ -15,7 +15,7 @@ TARGET_API = "https://www.nsfwlover.com/api/image"
 # KV 速率限制
 [[kv_namespaces]]
 binding = "KV"
-id = "YOUR_KV_NAMESPACE_ID"  # 先執行 `wrangler kv:namespace create "RATE-LIMIT"` 獲取
+id = "e29f3dba7c9a47a6a6d2f07703eb8f5a"  # 先執行 `wrangler kv:namespace create "RATE-LIMIT"` 獲取
 
 # 生產路由範例 (自訂域)
 [[env.production]]
