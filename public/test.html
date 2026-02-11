@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NSFWLover 生圖測試</title>
+  <style>body{font-family:system-ui;max-width:900px;margin:0 auto;padding:20px;}textarea,input,button{width:100%;margin:10px 0;padding:12px;box-sizing:border-box;font-size:16px;border:1px solid #ddd;border-radius:8px;}#preview{max-width:100%;height:auto;border:1px solid #ccc;border-radius:8px;margin:20px 0;}#status{color:#666;font-weight:500;}button{background:#007bff;color:white;border:none;cursor:pointer;font-weight:600;border-radius:8px;transition:background .2s;}button:hover{background:#0056b3;}button:disabled{background:#ccc;cursor:not-allowed;}</style>
+</head>
+<body>
+<h1>🖼️ NSFWLover Proxy 生圖測試</h1>
+<p><strong>Proxy:</strong> <code id="proxyUrl"></code> | <a href="https://www.nsfwlover.com/nsfw-ai-image-generator" target="_blank">原站</a></p>
+
+<textarea id="prompt" rows="3" placeholder="NSFW 提示...">1girl, solo, beautiful detailed face, nsfw, masterpiece, best quality</textarea>
+<input id="negative" placeholder="負向提示" value="worst quality, lowres, blurry">
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;">
+  <label>Steps: <input id="steps" type="range" min="10" max="50" value="30"><span id="stepsVal">30</span></label>
+  <label>Width: <input id="width" type="number" value="512" min="256" max="1024"></label>
+  <label>Height: <input id="height" type="number" value="512" min="256" max="1024"></label>
+  <label>Seed: <input id="seed" type="number" value="-1"></label>
+</div>
+
+<button onclick="generate()">🚀 生成圖像</button>
+<div id="status">輸入提示後點擊生成...</div>
+<img id="preview" style="display:none;">
+<a id="download" style="display:none;">💾 下載圖像</a>
+
+<script>
+document.getElementById('proxyUrl').textContent=window.location.origin;
+document.getElementById('steps').oninput=()=>{document.getElementById('stepsVal').textContent=this.value;document.getElementById('steps').value=this.value;}
+
+let currentImg='';
+async function generate(){
+  const btn=event.target;btn.disabled=true;btn.textContent='生成中...';document.getElementById('status').textContent='Proxy 請求中...';document.getElementById('preview').style.display='none';document.getElementById('download').style.display='none';
+  const body={prompt:document.getElementById('prompt').value,negative_prompt:document.getElementById('negative').value,steps:parseInt(document.getElementById('steps').value),width:parseInt(document.getElementById('width').value),height:parseInt(document.getElementById('height').value),seed:parseInt(document.getElementById('seed').value)};
+  try{
+    const resp=await fetch('',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await resp.json();
+    if(data.error)throw new Error(data.error);
+    currentImg=data.data[0].b64_json;document.getElementById('preview').src=currentImg;document.getElementById('preview').style.display='block';document.getElementById('status').textContent='✅ 生成成功！';document.getElementById('download').href=currentImg;document.getElementById('download').download='nsfw-image.png';document.getElementById('download').style.display='block';
+  }catch(e){document.getElementById('status').textContent=`❌ ${e.message}`;}
+  btn.disabled=false;btn.textContent='🚀 生成圖像';
+}
+</script>
+</body>
+</html>
